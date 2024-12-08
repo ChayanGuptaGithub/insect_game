@@ -9,21 +9,25 @@ let seconds = 30; // Countdown starts from 30 seconds
 let score = 0;
 let selectedInsect = {};
 let gameTimer;
+let isGameOver = false; // Track if the game is over
 
 startButton.addEventListener("click", () => screens[0].classList.add("up"));
 
 const increaseScore = () => {
+  if (isGameOver) return; // Prevent score increase after game over
   score++;
   if (score > 19) message.classList.add("visible");
   scoreElement.innerHTML = `Score: ${score}`;
 };
 
 const addInsects = () => {
+  if (isGameOver) return; // Prevent new insects after game over
   setTimeout(createInsect, 1000);
   setTimeout(createInsect, 1500);
 };
 
 const catchInsect = function () {
+  if (isGameOver) return; // Prevent catching insects after game over
   increaseScore();
   this.classList.add("caught");
   setTimeout(() => this.remove(), 2000);
@@ -39,6 +43,7 @@ const getRandomLocation = () => {
 };
 
 const createInsect = () => {
+  if (isGameOver) return; // Prevent creating insects after game over
   const insect = document.createElement("div");
   insect.classList.add("insect");
   const { x, y } = getRandomLocation();
@@ -66,8 +71,13 @@ const decreaseTime = () => {
 };
 
 const endGame = () => {
+  isGameOver = true; // Set game over flag
   message.innerHTML = `Game Over! <br /> Your Score: ${score}`;
   message.classList.add("visible");
+  // Disable interaction with insects
+  document.querySelectorAll(".insect").forEach((insect) => {
+    insect.style.pointerEvents = "none"; // Disable clicking on insects
+  });
 };
 
 const startGame = () => {
