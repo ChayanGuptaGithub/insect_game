@@ -5,9 +5,10 @@ const gameContainer = document.getElementById("game-container");
 const timeElement = document.getElementById("time");
 const scoreElement = document.getElementById("score");
 const message = document.getElementById("message");
-let seconds = 0;
+let seconds = 30; // Countdown starts from 30 seconds
 let score = 0;
 let selectedInsect = {};
+let gameTimer;
 
 startButton.addEventListener("click", () => screens[0].classList.add("up"));
 
@@ -25,7 +26,7 @@ const addInsects = () => {
 const catchInsect = function () {
   increaseScore();
   this.classList.add("caught");
-  setTimeout(() => this.remove, 2000);
+  setTimeout(() => this.remove(), 2000);
   addInsects();
 };
 
@@ -50,16 +51,28 @@ const createInsect = () => {
   gameContainer.appendChild(insect);
 };
 
-const increaseTime = () => {
+const decreaseTime = () => {
   let m = Math.floor(seconds / 60);
   let s = seconds % 60;
   m = m < 10 ? `0${m}` : m;
   s = s < 10 ? `0${s}` : s;
   timeElement.innerHTML = `Time: ${m}:${s}`;
-  seconds++;
+  seconds--;
+
+  if (seconds < 0) {
+    clearInterval(gameTimer);
+    endGame();
+  }
 };
 
-const startGame = () => setInterval(increaseTime, 1000);
+const endGame = () => {
+  message.innerHTML = `Game Over! <br /> Your Score: ${score}`;
+  message.classList.add("visible");
+};
+
+const startGame = () => {
+  gameTimer = setInterval(decreaseTime, 1000);
+};
 
 chooseInsectButtons.forEach((button) => {
   button.addEventListener("click", () => {
